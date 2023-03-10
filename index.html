@@ -4,11 +4,42 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/static/css/style.css" rel="stylesheet">
     <link rel="icon" href="#">
     <title>FORLIV</title>
     <script src="./static/js/conection.js" type="module"></script>
 </head>
 <body>
+    <!-- MAIN FORUM PAGE -->
+    <main id="forliv">
+        <header>
+            <img src="./static/img/logo.svg" id="logo"></img>
+            <div id="usermanagement">
+                <button id="signout"><div class="border-left"></div><div class="border-bottom"></div><p class="btn-text">sign out</p></button>
+                <button id="profil"><div class="border-left"></div><div class="border-bottom"></div><p class="btn-text">profil</p></button>
+            </div>
+        </header>
 
+    </main>
+    <!-- -------------- -->
+
+    <!-- LOGIN REGISTER PAGE -->
+    <main id="login/register">
+        <form id="loginform" action="javascript:void(0);">
+            <input id="logincredential" type="text" placeholder="Mail or Nickname">
+            <input id="password" type="text" placeholder="Password">
+            <button id="loginbt"><div class="border-left"></div><div class="border-bottom"></div><p class="btn-text">Login</p></button>
+        </form>
+        <form id="registerform" action="javascript:void(0);">
+        <input id="nickname" type="text" placeholder="Nickname">
+        <input id="age" type="text" placeholder="Age">
+        <input id="firstName" type="text" placeholder="First Name">
+        <input id="lastName" type="text" placeholder="Last Name">
+        <input id="password" type="text" placeholder="Password">
+        <input id="email" type="text" placeholder="Email">
+        <button id="registerbt"><div class="border-left"></div><div class="border-bottom"></div><p class="btn-text">Register</p></button>
+        </form>
+    </main>
+    <!-- ------------------- -->
 </body>
 </html>

@@ -1,5 +1,98 @@
+@font-face {
+    font-family: "BtFont";
+    src: url("../fonts/SoftLine.ttf")
+}
+
 body {
     margin: 0;
     height: 100vh;
     width: 100vw;
+    color: #696578;
 }
+
+
+/* UTILITIES >>>>>>*/
+
+    button {
+        font-family: "BtFont";
+        font-size: xx-large;
+        font-weight: bold;
+        text-decoration: none;
+        height: 30px;
+        width: auto;
+        background: none;
+        border: none;
+        position: relative;
+        padding: 2px;
+    }
+
+    button:hover > .border-bottom {
+        width: 100%;
+        transition: 0.7s;
+    }
+    button:hover > .border-left {
+        top: 100%;
+        transition: 0.7s;
+    }
+
+    .border-left {
+        transition: 0.7s;
+        border-left: 2px solid #696578;
+        position: absolute;
+        top: 15%;
+        bottom: 0;
+    }
+    
+    .border-bottom {
+        transition: 0.7s;
+        top: 100%;
+        position: absolute;
+        width: 0%;
+        border-bottom: 2px solid #696578;
+        top: 0;
+        bottom: 0;
+    }
+
+    .btn-text {
+        position: relative;
+        top: -8%;
+        left: 5%;
+        margin: 0;
+    }
+
+/* UTILITIES <<<<<<*/
+
+/* HEARDER >>>>>>*/
+#logo {
+    height: 100%;
+    width: 100%;
+    max-width: 300px;
+    min-width: 161px;
+    margin: 2px 2%;
+}
+
+#usermanagement {
+    height: 100%;
+    width: 100%;
+    max-width: 300px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+header {
+    height: 20%;
+    display: flex;
+    justify-content: space-between;
+}
+/* HEADER <<<<<<<<*/
+
+
+/* MAIN ACCEUIL >>>>>>>>>*/
+
+#forliv {
+    display: flex;
+    
+}
+
+/* MAIN ACCEUIL <<<<<<<<*/
