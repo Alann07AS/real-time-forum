@@ -10,6 +10,10 @@ body {
     color: #696578;
 }
 
+.hidepage {
+    display:none !important;
+}
+
 
 /* UTILITIES >>>>>>*/
 
@@ -18,7 +22,7 @@ body {
         font-size: xx-large;
         font-weight: bold;
         text-decoration: none;
-        height: 30px;
+        height: 30px !important;
         width: auto;
         background: none;
         border: none;
@@ -60,16 +64,18 @@ body {
         margin: 0;
     }
 
+    .logo {
+        height: 100%;
+        width: 100%;
+        max-width: 300px;
+        max-height: 300px;
+        min-width: 161px;
+        margin: 2px 2%;
+    }
+
 /* UTILITIES <<<<<<*/
 
 /* HEARDER >>>>>>*/
-#logo {
-    height: 100%;
-    width: 100%;
-    max-width: 300px;
-    min-width: 161px;
-    margin: 2px 2%;
-}
 
 #usermanagement {
     height: 100%;
@@ -96,3 +102,57 @@ header {
 }
 
 /* MAIN ACCEUIL <<<<<<<<*/
+
+
+/* LOGIN/REGISTER >>>>>>>>>*/
+
+#login_register {
+    display: flex;
+    height: 100vh;
+    max-height:100vh;
+    width: 100vw;
+    margin: 0;
+    flex-direction: column;
+    align-items: center;
+}
+
+#login_register input {
+    min-height: 0;
+    margin: 2px;
+}
+
+
+
+#login_register > form > div, form {
+    display: flex;
+    flex-direction: column;
+    /*! justify-content: center; */
+}
+
+#loginform {
+    flex-flow: column-reverse;
+}
+
+#login_register > form > * {
+    margin: 3px;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.greyline {
+    width: 80%;
+    border-bottom: 2px solid #696578 ;
+    margin: 2%;
+}
+
+.close {
+    transition: 1s;
+    transform: scaleY(0);
+    height: 0% !important;
+}
+
+.formdiv {
+    transition: 1s;
+}
+
+/* LOGIN/REGISTER <<<<<<<<*/
