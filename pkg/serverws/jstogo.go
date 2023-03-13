@@ -1,21 +1,20 @@
-package jstogo
+package serverws
 
 import (
 	"encoding/json"
 
 	"real-time-forum/pkg/datatbase"
-	"real-time-forum/pkg/serverws"
 
 	"github.com/Alann07AS/DevTools/GO/errm"
 )
 
 type Jstogo struct {
-	Client *serverws.Client
+	Client *Client
 	Order  int
 	Params []interface{}
 }
 
-func Parse(data []byte, client *serverws.Client) *Jstogo {
+func ParseMessageFromJs(data []byte, client *Client) *Jstogo {
 	parsedata := struct {
 		Order  int
 		Params []interface{}
@@ -31,7 +30,7 @@ func (jtg *Jstogo) Exec() {
 
 // definition des action possible
 
-var actionsGO = map[int]func(c *serverws.Client, args ...interface{}){}
+var actionsGO = map[int]func(c *Client, args ...interface{}){}
 
 // ordre recu par le js pour etre executer ici
 const (
@@ -68,7 +67,7 @@ const (
 )
 
 func init() {
-	actionsGO[GO_CREATE_USER] = func(c *serverws.Client, args ...interface{}) {
+	actionsGO[GO_CREATE_USER] = func(c *Client, args ...interface{}) {
 		err := datatbase.CreateUser(args[0].(string), args[1].(string), args[2].(string), args[3].(string), int(args[4].(float64)), args[5].(string))
 		errm.LogErr(err) // a remplacer par la fonction qui envoie au js l'erreur si il y en a une (mail exist nickname exist)
 	}

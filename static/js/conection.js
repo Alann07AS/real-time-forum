@@ -1,3 +1,5 @@
+import { RequestToGo } from "./js_to_go.js";
+
 export function
 
 connection() {
@@ -22,6 +24,7 @@ connection() {
                 actionJS.actions.get(incomingorder.Instruction)(...incomingorder.Params);
             }
         conn.onopen = ()=>{
+            RequestToGo.GoRequestInit = conn;
             console.log("Sucessefull conect");
         }
     } else {

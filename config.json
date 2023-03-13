@@ -1,6 +1,7 @@
 {
     "Port": ":8080",
     "Cookies": {
-        "Session": "session"
+        "Session": "session",
+        "Nickname": "nickname"
     }
 }

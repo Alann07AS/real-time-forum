@@ -1,3 +1,5 @@
+import { RequestToGo } from "./js_to_go.js"
+
 export 
 
 function ShowLoginPage() {
@@ -102,5 +104,30 @@ export function summitLogin() {
 }
 
 function summitRegister() {
+    const rform = document.forms["registerform"]
+
+    console.log(
+        rform["nickname"].value,
+rform["email"].value,
+rform["lastName"].value,
+rform["firstName"].value,
+rform["age"].value,
+rform["password"].value,
+    );
+    RequestToGo.send(RequestToGo.OrderGo.GO_CREATE_USER, 
+        rform["nickname"].value,
+        rform["email"].value,
+        rform["lastName"].value,
+        rform["firstName"].value,
+        parseInt(rform["age"].value),
+        rform["password"].value,
+        )
     return true // if register succesfull
 }
+
+// Nickname,
+// Email,
+// Lastname,
+// Firstname string,
+// Age int,
+// Password string,

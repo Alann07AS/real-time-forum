@@ -14,10 +14,9 @@ class RequestToGo {
      * @param {WebSocket} conn
      * set la connection 
      */
-    static set WebSocketInit(conn) {RequestToGo.conn = conn}
+    static set GoRequestInit(conn) {RequestToGo.conn = conn}
 
     /**
-     * 
      * @param {OrderGo} order 
      * @param {Any} params 
      */

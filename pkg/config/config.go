@@ -9,7 +9,8 @@ import (
 type Config struct {
 	Port    string
 	Cookies struct {
-		Session string
+		Session  string
+		Nickname string
 	}
 }
 
