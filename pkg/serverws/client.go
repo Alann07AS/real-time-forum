@@ -29,3 +29,8 @@ func (c *Client) Read() {
 		fmt.Println("m", message) // mesasge exec ___________________________________
 	}
 }
+
+func (c *Client) SwitchHub(h *Hub) {
+	c.Hub.Unregister <- c
+	h.Register <- c
+}

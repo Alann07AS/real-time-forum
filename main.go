@@ -11,8 +11,8 @@ import (
 var cfg *config.Config
 
 func init() {
+	config.GetConfig(&cfg)
 	config.LoadConfig("config.json")
-	cfg = config.GetConfig()
 	datatbase.OpenDB()
 }
 

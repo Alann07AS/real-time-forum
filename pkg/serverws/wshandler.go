@@ -13,7 +13,7 @@ import (
 var cfg *config.Config
 
 func init() {
-	cfg = config.GetConfig()
+	config.GetConfig(&cfg)
 }
 
 var upgrader = websocket.Upgrader{

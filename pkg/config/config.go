@@ -15,8 +15,14 @@ type Config struct {
 
 var cfg *Config
 
-func GetConfig() *Config {
-	return cfg
+var isLog = make(chan struct{}, 1)
+
+func GetConfig(c **Config) {
+	go func() {
+		<-isLog
+		isLog <- struct{}{}
+		*c = cfg
+	}()
 }
 
 func LoadConfig(configfilenameroot string) {
@@ -30,4 +36,5 @@ func LoadConfig(configfilenameroot string) {
 	if err = jsonParser.Decode(&cfg); err != nil {
 		log.Fatal(err)
 	}
+	isLog <- struct{}{}
 }
