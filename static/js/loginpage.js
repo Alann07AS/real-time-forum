@@ -12,6 +12,7 @@ function ShowLoginPage() {
 }
 
 function hideLoginPage() {
+    lastfocus = null
     const loginpage = document.getElementById("login_register")
     document.removeEventListener("click", listenToggleOff)
     document.removeEventListener("keydown", listenEnter)
@@ -29,7 +30,8 @@ function listenEnter(e) {
         const valid = Array(...document.forms['registerform']).every(input => input.checkValidity());
         if (valid && summitRegister()) {// if register success
             document.forms["loginform"]["logincredential"].value = document.forms["registerform"]["email"].value
-            document.forms["registerform"].reset()
+            document.forms["loginform"]["password"].focus()
+            setTimeout(()=>{document.forms["registerform"].reset()}, 300)
             registerdiv.classList.toggle("close", true)
             logindiv.classList.toggle("close", false)
         }
@@ -37,22 +39,23 @@ function listenEnter(e) {
 }
 
 
-
+let lastfocus = null
 function listenToggleOff(e) {
-    console.log(e.target.parentElement);
     if (e.target.parentElement.id === "loginbt") {
-        listenLoginBt()
+        listenLoginBt(e)
     } else if  (e.target.parentElement.id === "registerbt") {
-        listetRegisterBt()
-    } else if (e.target.parentElement.id === "body"){
+        listetRegisterBt(e)
+    } else if (e.target.parentElement.id === "body" && lastfocus === document.activeElement){
         const registerdiv = document.getElementById("registerdiv")
         const logindiv = document.getElementById("logindiv")
         registerdiv.classList.toggle("close", true)
         logindiv.classList.toggle("close", true)
     }
+    lastfocus = document.activeElement
+    if (lastfocus.tagName !== "INPUT") lastfocus = document.body 
 }
 
-function listetRegisterBt() {
+function listetRegisterBt(e) {
     const registerdiv = document.getElementById("registerdiv")
     const logindiv = document.getElementById("logindiv")
     const loginbt = document.getElementById("loginbt")
@@ -60,21 +63,22 @@ function listetRegisterBt() {
     if (registerdiv.classList.contains("close")) {
         registerdiv.classList.toggle("close", false)
         logindiv.classList.toggle("close", true)
-        console.log("summit");
-        setTimeout(()=>{
-            registerbt.setAttribute('type', "summit")
-            loginbt.setAttribute('type', 'button')
-        }, 1000)        
+        registerbt.setAttribute('type', "summit")
+        e.preventDefault()
     } else {
+        loginbt.setAttribute('type', 'button')
         const valid = Array(...document.forms['registerform']).every(input => input.checkValidity());
         if (valid && summitRegister()) {// if register success
+            document.forms["loginform"]["logincredential"].value = document.forms["registerform"]["email"].value
+            document.forms["loginform"]["password"].focus()
+            setTimeout(()=>{document.forms["registerform"].reset()}, 300)
             registerdiv.classList.toggle("close", true)
             logindiv.classList.toggle("close", false)
         }
     }
 }
 
-function listenLoginBt() {
+function listenLoginBt(e) {
     const registerdiv = document.getElementById("registerdiv")
     const logindiv = document.getElementById("logindiv")
     const loginbt = document.getElementById("loginbt")
@@ -82,11 +86,10 @@ function listenLoginBt() {
     if (logindiv.classList.contains("close")) {
         logindiv.classList.toggle("close", false)
         registerdiv.classList.toggle("close", true)
-        setTimeout(()=>{
-            registerbt.setAttribute('type', "button")
-            loginbt.setAttribute('type', 'summit')
-        }, 1000)  
+        loginbt.setAttribute('type', 'summit')
+        e.preventDefault()
     } else {
+        registerbt.setAttribute('type', "button")
         const valid = Array(...document.forms['loginform']).every(input => input.checkValidity());
         if (valid && summitLogin()) {// if login success
             hideLoginPage()
@@ -94,8 +97,8 @@ function listenLoginBt() {
     }
 }
 
-function summitLogin() {
-    return false // if login succesfull
+export function summitLogin() {
+    return true // if login succesfull
 }
 
 function summitRegister() {

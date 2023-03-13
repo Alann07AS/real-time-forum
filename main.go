@@ -2,14 +2,27 @@ package main
 
 import (
 	"net/http"
+
+	"real-time-forum/pkg/config"
+	"real-time-forum/pkg/datatbase"
+	"real-time-forum/pkg/serverws"
 )
 
-func greet(w http.ResponseWriter, r *http.Request) {
+var cfg *config.Config
+
+func init() {
+	config.LoadConfig("config.json")
+	cfg = config.GetConfig()
+	datatbase.OpenDB()
+}
+
+func index(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "index.html")
 }
 
 func main() {
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
-	http.HandleFunc("/", greet)
-	http.ListenAndServe(":8080", nil)
+	http.HandleFunc("/ws", serverws.Wsconnection)
+	http.HandleFunc("/", index)
+	http.ListenAndServe(cfg.Port, nil)
 }

@@ -1,6 +1,10 @@
 import * as logpage from "./loginpage.js";
 import * as websocket from "./conection.js";
 
-websocket.connection()
+window.onload = ()=>{
 
-logpage.ShowLoginPage()
+    websocket.connection()
+
+    logpage.ShowLoginPage()
+
+}
