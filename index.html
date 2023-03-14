@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="/static/css/style.css" rel="stylesheet">
     <link rel="icon" href="#">
-    <title>FORLIV</title>
     <script defer src="./static/js/init.js" type="module"></script>
+    <title>FORLIV</title>
 </head>
 <body id="body">
     <!-- MAIN FORUM PAGE -->
@@ -35,12 +35,12 @@
         <div class="greyline"></div>
         <form id="registerform" action="javascript:void(0);">
         <div id="registerdiv" class="formdiv close">
-            <input id="nickname" type="text" placeholder="Nickname" required>
-            <input id="age" type="number" placeholder="Age" required>
-            <input id="firstName" type="text" placeholder="First Name" required>
-            <input id="lastName" type="text" placeholder="Last Name" required>
-            <input id="password" type="password" placeholder="Password" required>
-            <input id="email" type="email" placeholder="Email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
+            <input id="nickname" type="text" placeholder="Nickname" required title="Enter your nickname.">
+            <input id="age" type="number" placeholder="Age" required min="18" title="Enter your age. You must have over than 18.">
+            <input id="firstName" type="text" placeholder="First Name" required title="Enter your firstname.">
+            <input id="lastName" type="text" placeholder="Last Name" required title="Enter your lastname.">
+            <input id="password" type="password" placeholder="Password" required title="Enter your nickname.">
+            <input id="email" type="email" placeholder="Email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required title="Enter your mail.'example@gmail.com'">
         </div>
         <button id="registerbt" type="button"><div class="border-left"></div><div class="border-bottom"></div><p class="btn-text">Register</p></button>
         </form>

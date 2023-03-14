@@ -1,3 +1,5 @@
+import { ErrCredential } from "./loginpage.js";
+
 export 
 
 class GoRequest {
@@ -24,5 +26,11 @@ class OrderJS {
     static setFunc (name, func) {
         OrderJS.funcs.set(name, func)
     }
-
+    static JS_ERR_CREDENTIAL = 1
 }
+
+OrderJS.setFunc(OrderJS.JS_ERR_CREDENTIAL, (...params)=>{
+    
+    console.log(params);
+    ErrCredential(params[0], params[1])
+})

@@ -1,6 +1,7 @@
 package serverws
 
 import (
+	"fmt"
 	"net/http"
 
 	"real-time-forum/pkg/config"
@@ -29,7 +30,7 @@ func Wsconnection(w http.ResponseWriter, r *http.Request) {
 
 	// debut de creation de client
 	client := &Client{Conn: conn}
-	go client.Listen()
+	defer func() { go client.Listen() }()
 
 	// verifie si cette utilisateur posséde une session
 	cksession, errs := r.Cookie(cfg.Cookies.Session)
@@ -44,7 +45,7 @@ func Wsconnection(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// verifie si cette session est présente en base de donner
-	uid := datatbase.GetSessionUserId(cksession.Value, cknickname.Value)
+	uid := datatbase.GetUserIdBySession(cksession.Value, cknickname.Value)
 	if !(uid > 0) {
 		// la perssone n'as pas etre identifier
 		loginHub.Register <- client
@@ -54,4 +55,5 @@ func Wsconnection(w http.ResponseWriter, r *http.Request) {
 	// la perssone est identifier
 	client.UserId = uid
 	forumHub.Register <- client
+	fmt.Println("exits")
 }

@@ -5,6 +5,10 @@ window.onload = ()=>{
 
     websocket.connection()
 
-    logpage.ShowLoginPage()
+    if (false) { //si connecter
+        //afficher forum
+    } else {
+        logpage.ShowLoginPage()
+    }
 
 }

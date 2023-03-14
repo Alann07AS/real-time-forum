@@ -11,7 +11,22 @@ function ShowLoginPage() {
     loginpage.classList.toggle("hidepage", false)
     document.addEventListener("click", listenToggleOff)
     document.addEventListener("keydown", listenEnter)
+    document.forms["registerform"]["nickname"].addEventListener("input", namedebounce)
+    document.forms["registerform"]["email"].addEventListener("input", emaildebounce)
 }
+
+const namedebounce = debounce(function() {
+    console.log("ONINPUT");
+    const nickname = document.forms["registerform"]["nickname"]
+    RequestToGo.send(RequestToGo.OrderGo.GO_CHECK_USER_EXIST, nickname.value, "nickname", "register")
+    nickname.setCustomValidity("")
+}, 450)
+
+const emaildebounce = debounce(function() {
+    const email = document.forms["registerform"]["email"]
+    RequestToGo.send(RequestToGo.OrderGo.GO_CHECK_USER_EXIST, email.value, "email", "register")
+    email.setCustomValidity("")
+    }, 450)
 
 function hideLoginPage() {
     lastfocus = null
@@ -19,23 +34,21 @@ function hideLoginPage() {
     document.removeEventListener("click", listenToggleOff)
     document.removeEventListener("keydown", listenEnter)
     loginpage.classList.toggle("hidepage", true)
+    document.forms["registerform"]["nickname"].removeEventListener("input", namedebounce)
+    document.forms["registerform"]["email"].removeEventListener("input", emaildebounce)
+
 }
 
 function listenEnter(e) {
     if (e.key !== "Enter") return
     if (e.target.parentElement.id === "logindiv") {
         const valid = Array(...document.forms['loginform']).every(input => input.checkValidity());
-        if (valid && summitLogin()) {// if login success
-            hideLoginPage()
+        if (valid) {//  login
+            summitLogin()
         }
     } else if  (e.target.parentElement.id === "registerdiv") {
-        const valid = Array(...document.forms['registerform']).every(input => input.checkValidity());
-        if (valid && summitRegister()) {// if register success
-            document.forms["loginform"]["logincredential"].value = document.forms["registerform"]["email"].value
-            document.forms["loginform"]["password"].focus()
-            setTimeout(()=>{document.forms["registerform"].reset()}, 300)
-            registerdiv.classList.toggle("close", true)
-            logindiv.classList.toggle("close", false)
+        if (CheckFormValidity("registerform")) {
+            summitRegister()
         }
     }
 }
@@ -65,17 +78,12 @@ function listetRegisterBt(e) {
     if (registerdiv.classList.contains("close")) {
         registerdiv.classList.toggle("close", false)
         logindiv.classList.toggle("close", true)
-        registerbt.setAttribute('type', "summit")
+        registerbt.setAttribute('type', "submit")
         e.preventDefault()
     } else {
         loginbt.setAttribute('type', 'button')
-        const valid = Array(...document.forms['registerform']).every(input => input.checkValidity());
-        if (valid && summitRegister()) {// if register success
-            document.forms["loginform"]["logincredential"].value = document.forms["registerform"]["email"].value
-            document.forms["loginform"]["password"].focus()
-            setTimeout(()=>{document.forms["registerform"].reset()}, 300)
-            registerdiv.classList.toggle("close", true)
-            logindiv.classList.toggle("close", false)
+        if (CheckFormValidity("registerform")) {
+            summitRegister()
         }
     }
 }
@@ -88,32 +96,28 @@ function listenLoginBt(e) {
     if (logindiv.classList.contains("close")) {
         logindiv.classList.toggle("close", false)
         registerdiv.classList.toggle("close", true)
-        loginbt.setAttribute('type', 'summit')
+        loginbt.setAttribute('type', 'submit')
         e.preventDefault()
     } else {
         registerbt.setAttribute('type', "button")
         const valid = Array(...document.forms['loginform']).every(input => input.checkValidity());
-        if (valid && summitLogin()) {// if login success
-            hideLoginPage()
+        if (valid) {// login
+            summitLogin()
         }
     }
 }
 
 export function summitLogin() {
-    return true // if login succesfull
+    const lform = document.forms["loginform"]
+    console.log("LOGIN");
+    RequestToGo.send(RequestToGo.OrderGo.GO_LOGIN_USER,
+        lform["logincredential"].value,
+        lform["password"].value,
+        )
 }
 
 function summitRegister() {
     const rform = document.forms["registerform"]
-
-    console.log(
-        rform["nickname"].value,
-rform["email"].value,
-rform["lastName"].value,
-rform["firstName"].value,
-rform["age"].value,
-rform["password"].value,
-    );
     RequestToGo.send(RequestToGo.OrderGo.GO_CREATE_USER, 
         rform["nickname"].value,
         rform["email"].value,
@@ -122,12 +126,65 @@ rform["password"].value,
         parseInt(rform["age"].value),
         rform["password"].value,
         )
-    return true // if register succesfull
 }
 
-// Nickname,
-// Email,
-// Lastname,
-// Firstname string,
-// Age int,
-// Password string,
+export
+function ErrCredential(type, formname) {
+    /**
+     * @type {HTMLFormElement}
+     */
+    const lform = document.forms["loginform"]
+    const rform = document.forms["registerform"]
+    switch (type+formname) {
+        case "emailregister":
+            rform["email"].setCustomValidity("Email already use.")
+            break;
+        case "nicknameregister":
+            rform["nickname"].setCustomValidity("Nickname already use.")
+            break;
+        case "validregister":
+            rform["nickname"].setCustomValidity("")
+            rform["email"].setCustomValidity("")
+            rform.submit()
+            SwitchForm()
+            break;
+        case "credentiallogin":
+            lform["logincredential"].setCustomValidity("User no exist.")
+            break;
+        case "passwordlogin":
+            lform["password"].setCustomValidity("Wrong user or wrong password.")
+            break;
+        case "validlogin":
+            lform.submit()
+            hideLoginPage()
+            break;
+        default:
+            console.error("ErrCredential err type")
+            break;
+    }
+    
+
+}
+
+function debounce(func, delay) {
+    let timeId;
+    return function(...args) {
+        if (timeId) {
+            clearTimeout(timeId);
+        }
+        timeId = setTimeout(() => {
+            func(...args);
+        }, delay);
+    };
+}
+
+function SwitchForm() {
+    document.forms["loginform"]["logincredential"].value = document.forms["registerform"]["email"].value
+    document.forms["loginform"]["password"].focus()
+    registerdiv.classList.toggle("close", true)
+    logindiv.classList.toggle("close", false)
+}
+
+function CheckFormValidity(formname) {
+    return Array(...document.forms[formname]).every(input => input.checkValidity());
+}
