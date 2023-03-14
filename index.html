@@ -27,8 +27,8 @@
         <img src="./static/img/logo.svg" class="logo" alt="forliv logo">
         <form id="loginform" action="javascript:void(0);">
             <div id="logindiv" class="formdiv close">
-                <input id="logincredential" type="text" placeholder="Mail or Nickname" required>
-                <input id="password" type="password" placeholder="Password" required>    
+                <input id="logincredential" type="text" placeholder="Mail or Nickname" required oninput="this.setCustomValidity('')">
+                <input id="password" type="password" placeholder="Password" required oninput="this.setCustomValidity('')">    
             </div>
             <button id="loginbt" type="button"><div class="border-left"></div><div class="border-bottom"></div><p class="btn-text">Login</p></button>
         </form>

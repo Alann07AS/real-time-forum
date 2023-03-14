@@ -1,5 +1,5 @@
 // Fonction pour écrire un cookie
-export function setCookie(name, value, date) {
+export function SetCookie(name, value, date) {
     var expires = "";
     if (date) {
         date.setTime(date);
@@ -9,7 +9,7 @@ export function setCookie(name, value, date) {
 }
 
 // Fonction pour lire un cookie
-export function getCookie(name) {
+export function GetCookie(name) {
     var nameEQ = name + "=";
     var ca = document.cookie.split(';');
     for(var i=0;i < ca.length;i++) {
