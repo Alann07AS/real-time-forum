@@ -37,36 +37,36 @@ var actionsGO = map[int]func(c *Client, args ...interface{}){}
 
 // ordre recu par le js pour etre executer ici
 const (
-	GO_CREATE_USER      = 1
-	GO_CHECK_USER_EXIST = 2
-	GO_LOGIN_USER       = 3
-	GO_4                = 4
-	GO_5                = 5
-	GO_6                = 6
-	GO_7                = 7
-	GO_8                = 8
-	GO_9                = 9
-	GO_10               = 10
-	GO_11               = 11
-	GO_12               = 12
-	GO_13               = 13
-	GO_14               = 14
-	GO_15               = 15
-	GO_16               = 16
-	GO_17               = 17
-	GO_18               = 18
-	GO_19               = 19
-	GO_20               = 20
-	GO_21               = 21
-	GO_22               = 22
-	GO_23               = 23
-	GO_24               = 24
-	GO_25               = 25
-	GO_26               = 26
-	GO_27               = 27
-	GO_28               = 28
-	GO_29               = 29
-	GO_30               = 30
+	GO_CREATE_USER       = 1
+	GO_CHECK_USER_EXIST  = 2
+	GO_LOGIN_USER        = 3
+	GO_CHECK_USER_STATUS = 4
+	GO_5                 = 5
+	GO_6                 = 6
+	GO_7                 = 7
+	GO_8                 = 8
+	GO_9                 = 9
+	GO_10                = 10
+	GO_11                = 11
+	GO_12                = 12
+	GO_13                = 13
+	GO_14                = 14
+	GO_15                = 15
+	GO_16                = 16
+	GO_17                = 17
+	GO_18                = 18
+	GO_19                = 19
+	GO_20                = 20
+	GO_21                = 21
+	GO_22                = 22
+	GO_23                = 23
+	GO_24                = 24
+	GO_25                = 25
+	GO_26                = 26
+	GO_27                = 27
+	GO_28                = 28
+	GO_29                = 29
+	GO_30                = 30
 )
 
 func init() {
@@ -88,14 +88,27 @@ func init() {
 		}
 	}
 	actionsGO[GO_LOGIN_USER] = func(c *Client, args ...interface{}) {
-		err := datatbase.LoginUser(args[0].(string), args[1].(string))
+		uuid, nickname, err := datatbase.LoginUser(args[0].(string), args[1].(string))
 		switch err {
 		case datatbase.ErrCredentialNotExist:
 			c.Send(CreateMessageToJs(JS_ERR_CREDENTIAL, "credential", "login").Byte())
 		case datatbase.ErrPassWrong:
 			c.Send(CreateMessageToJs(JS_ERR_CREDENTIAL, "password", "login").Byte())
-		default:
+		case nil:
+			c.UserId = datatbase.GetUserIdBySession(uuid, nickname)
+			c.Send(CreateMessageToJs(JS_CREATE_SESSION_COOKIE, uuid, nickname).Byte())
 			c.Send(CreateMessageToJs(JS_ERR_CREDENTIAL, "valid", "login").Byte())
+		}
+	}
+	actionsGO[GO_CHECK_USER_STATUS] = func(c *Client, args ...interface{}) {
+		if id := datatbase.GetUserIdBySession(args[0].(string), args[1].(string)); id > 0 {
+			c.UserId = id
+			fmt.Println("ISFINDINSESSION")
+			c.Send(CreateMessageToJs(JS_SHOW_FORUM).Byte())
+		} else {
+			fmt.Println("isnotfind")
+			c.UserId = 0
+			c.Send(CreateMessageToJs(JS_SHOW_LOGIN).Byte())
 		}
 	}
 }

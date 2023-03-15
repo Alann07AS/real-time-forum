@@ -24,8 +24,8 @@ func (g *Gotojs) Byte() []byte {
 const (
 	JS_ERR_CREDENTIAL        = 1
 	JS_CREATE_SESSION_COOKIE = 2
-	JS_3                     = 3
-	JS_4                     = 4
+	JS_SHOW_LOGIN            = 3
+	JS_SHOW_FORUM            = 4
 	JS_5                     = 5
 	JS_6                     = 6
 	JS_7                     = 7

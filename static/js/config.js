@@ -1,4 +1,13 @@
-export var config
+var config = fetch("./static/json/config.json").then((p)=>p.json().then((v)=>v))
 
-fetch("./init.js")
-.then((response) => console.log(response.text().then((t) => {console.log(t)})))
+/**
+ * 
+ * @param {Function} func 
+ */
+export function getconfig(func) {
+    config.then(
+        (value) => {
+            func(value)
+        }
+    )
+}

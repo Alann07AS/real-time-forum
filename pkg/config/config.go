@@ -27,7 +27,7 @@ func GetConfig(c **Config) {
 }
 
 func LoadConfig(configfilenameroot string) {
-	configFile, err := os.Open(configfilenameroot)
+	configFile, err := os.Open("./static/json/" + configfilenameroot)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -1,7 +1,6 @@
 package serverws
 
 import (
-	"fmt"
 	"net/http"
 
 	"real-time-forum/pkg/config"
@@ -55,5 +54,4 @@ func Wsconnection(w http.ResponseWriter, r *http.Request) {
 	// la perssone est identifier
 	client.UserId = uid
 	forumHub.Register <- client
-	fmt.Println("exits")
 }
