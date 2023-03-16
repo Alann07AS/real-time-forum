@@ -1,8 +1,10 @@
+import { HideForumPage } from "./forumpage.js"
 import { RequestToGo } from "./js_to_go.js"
 
 export 
 
 function ShowLoginPage() {
+    HideForumPage()
     const loginpage = document.getElementById("login_register")
     const loginbt = document.getElementById("loginbt")
     const registerbt = document.getElementById("registerbt")
@@ -28,7 +30,7 @@ const emaildebounce = debounce(function() {
     email.setCustomValidity("")
     }, 450)
 
-function hideLoginPage() {
+export function HideLoginPage() {
     lastfocus = null
     const loginpage = document.getElementById("login_register")
     document.removeEventListener("click", listenToggleOff)
@@ -155,8 +157,8 @@ function ErrCredential(type, formname) {
             lform["password"].setCustomValidity("Wrong user or wrong password.")
             break;
         case "validlogin":
-            lform.submit()
-            hideLoginPage()
+            HideLoginPage()
+            lform.reset()
             break;
         default:
             console.error("ErrCredential err type")

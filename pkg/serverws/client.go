@@ -1,8 +1,6 @@
 package serverws
 
 import (
-	"fmt"
-
 	"github.com/Alann07AS/DevTools/GO/errm"
 	"github.com/gorilla/websocket"
 )
@@ -20,9 +18,6 @@ func (c *Client) Send(data []byte) {
 
 func (c *Client) Listen() {
 	defer func() {
-		fmt.Println("1", c)
-		fmt.Println("2", c.Hub)
-		fmt.Println("3", c.Hub.Unregister)
 		c.Hub.Unregister <- c
 	}() // c.Conn.Close()
 	for {

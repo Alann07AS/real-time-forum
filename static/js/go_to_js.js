@@ -1,5 +1,6 @@
 import { getconfig } from "./config.js";
-import { SetCookie, SetSessionTimeOut } from "./cookies.js";
+import { SetCookie } from "./cookies.js";
+import { ShowForumPage } from "./forumpage.js";
 import { ErrCredential, ShowLoginPage } from "./loginpage.js";
 
 export 
@@ -49,9 +50,7 @@ OrderJS.setFunc(OrderJS.JS_CREATE_SESSION_COOKIE, (...params)=>{
 })
 
 OrderJS.setFunc(OrderJS.JS_SHOW_FORUM, (...params)=>{
-    // ShowForumPage()
-    document.getElementById("forliv").classList.toggle("hidepage", false)
-    SetSessionTimeOut()
+    ShowForumPage()
 })
 
 OrderJS.setFunc(OrderJS.JS_SHOW_LOGIN, (...params)=>{

@@ -38,4 +38,5 @@ class OrderGo {
     static GO_CHECK_USER_EXIST = 2
     static GO_LOGIN_USER = 3
     static GO_CHECK_USER_STATUS = 4
+    static GO_LOGOUT_USER = 5
 }

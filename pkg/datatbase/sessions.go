@@ -44,3 +44,12 @@ func LoginUser(
 }
 
 // login user^^^^^^^^
+
+// logout user--------
+
+func LogOutUserById(userid int64) {
+	_, err := db.Exec(`DELETE FROM sessions WHERE Userid = ?`, userid)
+	errm.LogErr(err)
+}
+
+// logout user^^^^^^^^

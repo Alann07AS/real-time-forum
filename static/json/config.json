@@ -3,6 +3,6 @@
     "Cookies": {
         "Session": "session",
         "Nickname": "nickname",
-        "Expiration": 1
+        "Expiration": 60
     }
 }

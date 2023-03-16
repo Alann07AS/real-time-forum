@@ -41,7 +41,7 @@ const (
 	GO_CHECK_USER_EXIST  = 2
 	GO_LOGIN_USER        = 3
 	GO_CHECK_USER_STATUS = 4
-	GO_5                 = 5
+	GO_LOGOUT_USER       = 5
 	GO_6                 = 6
 	GO_7                 = 7
 	GO_8                 = 8
@@ -97,18 +97,26 @@ func init() {
 		case nil:
 			c.UserId = datatbase.GetUserIdBySession(uuid, nickname)
 			c.Send(CreateMessageToJs(JS_CREATE_SESSION_COOKIE, uuid, nickname).Byte())
+			c.Send(CreateMessageToJs(JS_SHOW_FORUM).Byte())
 			c.Send(CreateMessageToJs(JS_ERR_CREDENTIAL, "valid", "login").Byte())
 		}
 	}
 	actionsGO[GO_CHECK_USER_STATUS] = func(c *Client, args ...interface{}) {
 		if id := datatbase.GetUserIdBySession(args[0].(string), args[1].(string)); id > 0 {
 			c.UserId = id
-			fmt.Println("ISFINDINSESSION")
 			c.Send(CreateMessageToJs(JS_SHOW_FORUM).Byte())
 		} else {
-			fmt.Println("isnotfind")
 			c.UserId = 0
 			c.Send(CreateMessageToJs(JS_SHOW_LOGIN).Byte())
+		}
+	}
+	actionsGO[GO_LOGOUT_USER] = func(c *Client, args ...interface{}) {
+		if id := datatbase.GetUserIdBySession(args[0].(string), args[1].(string)); id == c.UserId {
+			c.UserId = 0
+			datatbase.LogOutUserById(id)
+			c.Send(CreateMessageToJs(JS_SHOW_LOGIN).Byte())
+		} else {
+			c.Hub.Unregister <- c
 		}
 	}
 }
