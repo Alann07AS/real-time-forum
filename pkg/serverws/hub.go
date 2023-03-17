@@ -1,5 +1,7 @@
 package serverws
 
+import "fmt"
+
 // mon hub d'acceuil et mon hub pour les client connecter
 var loginHub, forumHub = NewHub(), NewHub()
 
@@ -29,8 +31,18 @@ func (h *Hub) Run() {
 			delete(h.Clients, client)
 		case data := <-h.Broadcast:
 			for c := range h.Clients {
+				fmt.Println("BRODCAST TO", c.UerId)
 				c.Send(data)
 			}
 		}
 	}
+}
+
+func (h *Hub) CheckUserActif(uid int64) bool {
+	for c := range h.Clients {
+		if c.UserId == uid {
+			return true
+		}
+	}
+	return false
 }

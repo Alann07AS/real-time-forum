@@ -11,6 +11,30 @@ type Gotojs struct {
 	Params []interface{}
 }
 
+type GotojsByteBuffer struct {
+	Buf []byte
+	n   int
+}
+
+func NewGotojsBuffer() *GotojsByteBuffer {
+	return &GotojsByteBuffer{make([]byte, 0), 0}
+}
+
+func (b *GotojsByteBuffer) Get() []byte {
+	return b.Buf
+}
+
+func (b *GotojsByteBuffer) Len() int {
+	return len(b.Buf)
+}
+
+func (b *GotojsByteBuffer) Add(messagebyte []byte) {
+	if b.Len() > 0 {
+		b.Buf = append(b.Buf, '\n')
+	}
+	b.Buf = append(b.Buf, messagebyte...)
+}
+
 func CreateMessageToJs(order int, params ...interface{}) *Gotojs {
 	return &Gotojs{order, params}
 }
@@ -26,9 +50,9 @@ const (
 	JS_CREATE_SESSION_COOKIE = 2
 	JS_SHOW_LOGIN            = 3
 	JS_SHOW_FORUM            = 4
-	JS_5                     = 5
-	JS_6                     = 6
-	JS_7                     = 7
+	JS_UPDATE_CAT            = 5
+	JS_UPDATE_POST           = 6
+	JS_UPDATE_USER           = 7
 	JS_8                     = 8
 	JS_9                     = 9
 	JS_10                    = 10

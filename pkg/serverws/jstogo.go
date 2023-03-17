@@ -42,7 +42,7 @@ const (
 	GO_LOGIN_USER        = 3
 	GO_CHECK_USER_STATUS = 4
 	GO_LOGOUT_USER       = 5
-	GO_6                 = 6
+	GO_CREATE_POST       = 6
 	GO_7                 = 7
 	GO_8                 = 8
 	GO_9                 = 9
@@ -96,15 +96,32 @@ func init() {
 			c.Send(CreateMessageToJs(JS_ERR_CREDENTIAL, "password", "login").Byte())
 		case nil:
 			c.UserId = datatbase.GetUserIdBySession(uuid, nickname)
-			c.Send(CreateMessageToJs(JS_CREATE_SESSION_COOKIE, uuid, nickname).Byte())
-			c.Send(CreateMessageToJs(JS_SHOW_FORUM).Byte())
-			c.Send(CreateMessageToJs(JS_ERR_CREDENTIAL, "valid", "login").Byte())
+			newMessageBuf := NewGotojsBuffer()
+			newMessageBuf.Add(CreateMessageToJs(JS_CREATE_SESSION_COOKIE, uuid, nickname).Byte())
+			newMessageBuf.Add(CreateMessageToJs(JS_SHOW_FORUM).Byte())
+			newMessageBuf.Add(CreateMessageToJs(JS_UPDATE_CAT, datatbase.GetCatego()).Byte())
+			newMessageBuf.Add(CreateMessageToJs(JS_UPDATE_POST, datatbase.GetPost()).Byte())
+			newMessageBuf.Add(CreateMessageToJs(JS_ERR_CREDENTIAL, "valid", "login").Byte())
+			c.Send(newMessageBuf.Get())
+			users := datatbase.GetUser()
+			for _, u := range users {
+				u["Actif"] = forumHub.CheckUserActif(u["ID"].(int64))
+			}
+			c.Hub.Broadcast <- CreateMessageToJs(JS_UPDATE_USER, users).Byte()
 		}
 	}
 	actionsGO[GO_CHECK_USER_STATUS] = func(c *Client, args ...interface{}) {
 		if id := datatbase.GetUserIdBySession(args[0].(string), args[1].(string)); id > 0 {
 			c.UserId = id
-			c.Send(CreateMessageToJs(JS_SHOW_FORUM).Byte())
+			users := datatbase.GetUser()
+			for _, u := range users {
+				u["Actif"] = forumHub.CheckUserActif(u["ID"].(int64))
+			}
+			newMessageBuf := NewGotojsBuffer()
+			newMessageBuf.Add(CreateMessageToJs(JS_SHOW_FORUM).Byte())
+			newMessageBuf.Add(CreateMessageToJs(JS_UPDATE_CAT, datatbase.GetCatego()).Byte())
+			newMessageBuf.Add(CreateMessageToJs(JS_UPDATE_POST, datatbase.GetPost()).Byte())
+			c.Send(newMessageBuf.Get())
 		} else {
 			c.UserId = 0
 			c.Send(CreateMessageToJs(JS_SHOW_LOGIN).Byte())
@@ -112,11 +129,25 @@ func init() {
 	}
 	actionsGO[GO_LOGOUT_USER] = func(c *Client, args ...interface{}) {
 		if id := datatbase.GetUserIdBySession(args[0].(string), args[1].(string)); id == c.UserId {
+			users := datatbase.GetUser()
+			for _, u := range users {
+				u["Actif"] = forumHub.CheckUserActif(u["ID"].(int64))
+			}
+			c.Hub.Broadcast <- CreateMessageToJs(JS_UPDATE_USER, users).Byte()
 			c.UserId = 0
 			datatbase.LogOutUserById(id)
 			c.Send(CreateMessageToJs(JS_SHOW_LOGIN).Byte())
-		} else {
-			c.Hub.Unregister <- c
+		} // else {
+		// c.Hub.Unregister <- c
+		// }
+	}
+	actionsGO[GO_CREATE_POST] = func(c *Client, args ...interface{}) {
+		aInterface := args[2].([]interface{})
+		cattable := make([]string, len(aInterface))
+		for i, v := range aInterface {
+			cattable[i] = v.(string)
 		}
+		datatbase.CreatePost(c.UserId, args[0].(string), args[1].(string), cattable)
+		c.Hub.Broadcast <- CreateMessageToJs(JS_UPDATE_POST, datatbase.GetPost()).Byte()
 	}
 }

@@ -80,7 +80,7 @@ body {
 #usermanagement {
     height: 100%;
     width: 100%;
-    max-width: 300px;
+    max-width: 40%;
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -125,6 +125,7 @@ header {
 #posts {
     height: 100%;
     width: 65%;
+    overflow: auto;
 }
 
 #createpost {
@@ -209,6 +210,14 @@ header {
     border-radius: 50%;
 }
 
+.classpost {
+    position: relative;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
 
 
 /* MAIN ACCEUIL <<<<<<<<*/
@@ -266,3 +275,14 @@ header {
 }
 
 /* LOGIN/REGISTER <<<<<<<<*/
+
+
+/* CHAT >>>>>>>>>*/
+.active {
+    color: green;
+}
+.inactive {
+    color: red;
+}
+
+/* CHAT <<<<<<<<*/

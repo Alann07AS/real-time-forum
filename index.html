@@ -16,7 +16,7 @@
             <img src="./static/img/logo.svg" class="logo"></img>
             <div id="usermanagement">
                 <button id="signout"><div class="border-left"></div><div class="border-bottom"></div><p class="btn-text">sign out</p></button>
-                <button id="profil"><div class="border-left"></div><div class="border-bottom"></div><p class="btn-text">profil</p></button>
+                <button id="profil"><div class="border-left"></div><div class="border-bottom"></div><p id="username"class="btn-text">profil</p></button>
             </div>
         </header>
         <div id="content" class="gridpost">
@@ -24,19 +24,22 @@
                 <div class="verticalsep"></div>
                 <!-- posts -->
             </div>
+            <!-- CREATE POST -->
             <div id="createpost">
                 <form action="javascript:void(0);" id="createform" class="hidepage">
                     <input id="ptitle" type="text" placeholder="Post title">
                     <textarea id="pcontent" cols="30" rows="10" placeholder="Post content"></textarea>
-                    <div id="pcatego"></div>
+                    <div id="pcatego">
+                    </div>
                 </form>
                 <button><div class="border-left"></div><div class="border-bottom"></div><p class="btn-text" id="createpostbt">Create new post</p></button>
                 <div class="horizontalsepbottom"></div>
             </div>
+            <!-- ---------- -->
             <div id="filters"></div>
             <div id="chats">
                 <div class="horizontalseptop"></div>
-
+                <div id="userlist"></div>
             </div>
         </div>
         <div id="test">

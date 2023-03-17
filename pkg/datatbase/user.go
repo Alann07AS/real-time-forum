@@ -52,3 +52,19 @@ func GetUserIdByMailOrNickname(login string) (id int64) {
 	db.QueryRow("SELECT ID FROM users WHERE lower(Nickname) = ? OR lower(Email) = ?", login, login).Scan(&id)
 	return
 }
+
+func GetUser() (m []map[string]interface{}) {
+	rows, err := db.Query(`
+		SELECT ID, Nickname FROM users
+	`)
+	errm.LogErr(err)
+	for rows.Next() {
+		var ID int64
+		var Nickname string
+		rows.Scan(&ID, &Nickname)
+		m = append(m, map[string]interface{}{})
+		m[len(m)-1]["ID"] = ID
+		m[len(m)-1]["Nickname"] = Nickname
+	}
+	return
+}
