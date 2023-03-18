@@ -33,4 +33,5 @@ func (c *Client) Listen() {
 func (c *Client) SwitchHub(h *Hub) {
 	c.Hub.Unregister <- c
 	h.Register <- c
+	c.Hub = h
 }

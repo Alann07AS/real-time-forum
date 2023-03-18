@@ -3,6 +3,7 @@ package serverws
 import (
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"real-time-forum/pkg/datatbase"
 
@@ -22,12 +23,10 @@ func ParseMessageFromJs(data []byte, client *Client) *Jstogo {
 	}{}
 	err := json.Unmarshal(data, &parsedata)
 	errm.LogErr(err)
-	fmt.Println("COUOCU", string(data))
 	return &Jstogo{Client: client, Order: parsedata.Order, Params: parsedata.Params}
 }
 
 func (jtg *Jstogo) Exec() {
-	fmt.Println("pomm", jtg)
 	actionsGO[jtg.Order](jtg.Client, jtg.Params...)
 }
 
@@ -70,6 +69,17 @@ const (
 )
 
 func init() {
+	updatcstatus := func(c *Client) {
+		go func() {
+			users := datatbase.GetUser()
+			time.Sleep(400 * time.Millisecond)
+			for _, u := range users {
+				u["Actif"] = forumHub.CheckUserActif(u["ID"].(int64))
+			}
+			fmt.Println(users)
+			forumHub.Broadcast <- CreateMessageToJs(JS_UPDATE_USER, users).Byte()
+		}()
+	}
 	actionsGO[GO_CREATE_USER] = func(c *Client, args ...interface{}) {
 		err := datatbase.CreateUser(args[0].(string), args[1].(string), args[2].(string), args[3].(string), int(args[4].(float64)), args[5].(string))
 		errm.LogErr(err) // a remplacer par la fonction qui envoie au js l'erreur si il y en a une (mail exist nickname exist)
@@ -95,6 +105,8 @@ func init() {
 		case datatbase.ErrPassWrong:
 			c.Send(CreateMessageToJs(JS_ERR_CREDENTIAL, "password", "login").Byte())
 		case nil:
+			c.SwitchHub(forumHub)
+			updatcstatus(c)
 			c.UserId = datatbase.GetUserIdBySession(uuid, nickname)
 			newMessageBuf := NewGotojsBuffer()
 			newMessageBuf.Add(CreateMessageToJs(JS_CREATE_SESSION_COOKIE, uuid, nickname).Byte())
@@ -103,20 +115,11 @@ func init() {
 			newMessageBuf.Add(CreateMessageToJs(JS_UPDATE_POST, datatbase.GetPost()).Byte())
 			newMessageBuf.Add(CreateMessageToJs(JS_ERR_CREDENTIAL, "valid", "login").Byte())
 			c.Send(newMessageBuf.Get())
-			users := datatbase.GetUser()
-			for _, u := range users {
-				u["Actif"] = forumHub.CheckUserActif(u["ID"].(int64))
-			}
-			c.Hub.Broadcast <- CreateMessageToJs(JS_UPDATE_USER, users).Byte()
 		}
 	}
 	actionsGO[GO_CHECK_USER_STATUS] = func(c *Client, args ...interface{}) {
 		if id := datatbase.GetUserIdBySession(args[0].(string), args[1].(string)); id > 0 {
 			c.UserId = id
-			users := datatbase.GetUser()
-			for _, u := range users {
-				u["Actif"] = forumHub.CheckUserActif(u["ID"].(int64))
-			}
 			newMessageBuf := NewGotojsBuffer()
 			newMessageBuf.Add(CreateMessageToJs(JS_SHOW_FORUM).Byte())
 			newMessageBuf.Add(CreateMessageToJs(JS_UPDATE_CAT, datatbase.GetCatego()).Byte())
@@ -126,14 +129,12 @@ func init() {
 			c.UserId = 0
 			c.Send(CreateMessageToJs(JS_SHOW_LOGIN).Byte())
 		}
+		updatcstatus(c)
 	}
 	actionsGO[GO_LOGOUT_USER] = func(c *Client, args ...interface{}) {
 		if id := datatbase.GetUserIdBySession(args[0].(string), args[1].(string)); id == c.UserId {
-			users := datatbase.GetUser()
-			for _, u := range users {
-				u["Actif"] = forumHub.CheckUserActif(u["ID"].(int64))
-			}
-			c.Hub.Broadcast <- CreateMessageToJs(JS_UPDATE_USER, users).Byte()
+			updatcstatus(c)
+			c.SwitchHub(loginHub)
 			c.UserId = 0
 			datatbase.LogOutUserById(id)
 			c.Send(CreateMessageToJs(JS_SHOW_LOGIN).Byte())

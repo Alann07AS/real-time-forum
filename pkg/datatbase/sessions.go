@@ -1,8 +1,6 @@
 package datatbase
 
 import (
-	"fmt"
-
 	"github.com/Alann07AS/DevTools/GO/errm"
 	"github.com/gofrs/uuid"
 	"golang.org/x/crypto/bcrypt"
@@ -18,7 +16,6 @@ func LoginUser(
 	Credential,
 	Password string,
 ) (string, string, error) {
-	fmt.Println("StartLOGIN")
 	// check credential exist
 	uid := GetUserIdByMailOrNickname(Credential)
 	if uid < 1 {

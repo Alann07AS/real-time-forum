@@ -1,7 +1,5 @@
 package serverws
 
-import "fmt"
-
 // mon hub d'acceuil et mon hub pour les client connecter
 var loginHub, forumHub = NewHub(), NewHub()
 
@@ -31,7 +29,6 @@ func (h *Hub) Run() {
 			delete(h.Clients, client)
 		case data := <-h.Broadcast:
 			for c := range h.Clients {
-				fmt.Println("BRODCAST TO", c.UerId)
 				c.Send(data)
 			}
 		}
