@@ -309,6 +309,8 @@ header {
     background-color: rgba(206, 206, 206, 0.342);
     border-radius: 2px;
     overflow: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 #userlist {

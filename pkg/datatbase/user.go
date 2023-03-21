@@ -68,3 +68,11 @@ func GetUser() (m []map[string]interface{}) {
 	}
 	return
 }
+
+func GetUserNicknameById(uid int64) (nickname string) {
+	row := db.QueryRow(`
+		SELECT Nickname FROM users WHERE ID = ?
+	`, uid)
+	row.Scan(&nickname)
+	return
+}

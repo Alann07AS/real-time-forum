@@ -34,36 +34,36 @@ var actionsGO = map[int]func(c *Client, args ...interface{}){}
 
 // ordre recu par le js pour etre executer ici
 const (
-	GO_CREATE_USER       = 1
-	GO_CHECK_USER_EXIST  = 2
-	GO_LOGIN_USER        = 3
-	GO_CHECK_USER_STATUS = 4
-	GO_LOGOUT_USER       = 5
-	GO_CREATE_POST       = 6
-	GO_GET_MESSAGE_FROM  = 7
-	GO_SEND_MESSAGE_TO   = 8
-	GO_9                 = 9
-	GO_10                = 10
-	GO_11                = 11
-	GO_12                = 12
-	GO_13                = 13
-	GO_14                = 14
-	GO_15                = 15
-	GO_16                = 16
-	GO_17                = 17
-	GO_18                = 18
-	GO_19                = 19
-	GO_20                = 20
-	GO_21                = 21
-	GO_22                = 22
-	GO_23                = 23
-	GO_24                = 24
-	GO_25                = 25
-	GO_26                = 26
-	GO_27                = 27
-	GO_28                = 28
-	GO_29                = 29
-	GO_30                = 30
+	GO_CREATE_USER         = 1
+	GO_CHECK_USER_EXIST    = 2
+	GO_LOGIN_USER          = 3
+	GO_CHECK_USER_STATUS   = 4
+	GO_LOGOUT_USER         = 5
+	GO_CREATE_POST         = 6
+	GO_GET_MESSAGE_FROM    = 7
+	GO_SEND_MESSAGE_TO     = 8
+	GO_CLEAR_MESSAGE_NOTIF = 9
+	GO_10                  = 10
+	GO_11                  = 11
+	GO_12                  = 12
+	GO_13                  = 13
+	GO_14                  = 14
+	GO_15                  = 15
+	GO_16                  = 16
+	GO_17                  = 17
+	GO_18                  = 18
+	GO_19                  = 19
+	GO_20                  = 20
+	GO_21                  = 21
+	GO_22                  = 22
+	GO_23                  = 23
+	GO_24                  = 24
+	GO_25                  = 25
+	GO_26                  = 26
+	GO_27                  = 27
+	GO_28                  = 28
+	GO_29                  = 29
+	GO_30                  = 30
 )
 
 func init() {
@@ -79,11 +79,13 @@ func init() {
 			c.Send(CreateMessageToJs(JS_ERR_CREDENTIAL, "valid", "register").Byte())
 		}
 	}
+
 	actionsGO[GO_CHECK_USER_EXIST] = func(c *Client, args ...interface{}) {
 		if id := datatbase.GetUserIdByMailOrNickname(args[0].(string)); id > 0 {
 			c.Send(CreateMessageToJs(JS_ERR_CREDENTIAL, args[1].(string), args[2].(string)).Byte())
 		}
 	}
+
 	actionsGO[GO_LOGIN_USER] = func(c *Client, args ...interface{}) {
 		uuid, nickname, err := datatbase.LoginUser(args[0].(string), args[1].(string))
 		switch err {
@@ -103,6 +105,7 @@ func init() {
 			c.Send(newMessageBuf.Get())
 		}
 	}
+
 	actionsGO[GO_CHECK_USER_STATUS] = func(c *Client, args ...interface{}) {
 		if id := datatbase.GetUserIdBySession(args[0].(string), args[1].(string)); id > 0 {
 			c.UserId = id
@@ -110,12 +113,14 @@ func init() {
 			newMessageBuf.Add(CreateMessageToJs(JS_SHOW_FORUM).Byte())
 			newMessageBuf.Add(CreateMessageToJs(JS_UPDATE_CAT, datatbase.GetCatego()).Byte())
 			newMessageBuf.Add(CreateMessageToJs(JS_UPDATE_POST, datatbase.GetPost()).Byte())
+			newMessageBuf.Add(CreateMessageToJs(JS_UPDATE_POST, datatbase.GetPost()).Byte())
 			c.Send(newMessageBuf.Get())
 		} else {
 			c.UserId = 0
 			c.Send(CreateMessageToJs(JS_SHOW_LOGIN).Byte())
 		}
 	}
+
 	actionsGO[GO_LOGOUT_USER] = func(c *Client, args ...interface{}) {
 		if id := datatbase.GetUserIdBySession(args[0].(string), args[1].(string)); id == c.UserId {
 			c.SwitchHub(loginHub)
@@ -126,6 +131,7 @@ func init() {
 		// c.Hub.Unregister <- c
 		// }
 	}
+
 	actionsGO[GO_CREATE_POST] = func(c *Client, args ...interface{}) {
 		aInterface := args[2].([]interface{})
 		cattable := make([]string, len(aInterface))
@@ -135,6 +141,7 @@ func init() {
 		datatbase.CreatePost(c.UserId, args[0].(string), args[1].(string), cattable)
 		c.Hub.Broadcast <- CreateMessageToJs(JS_UPDATE_POST, datatbase.GetPost()).Byte()
 	}
+
 	actionsGO[GO_GET_MESSAGE_FROM] = func(c *Client, args ...interface{}) {
 		m := datatbase.GetMessage(int64(args[0].(float64)), c.UserId, 10, int(args[1].(float64)))
 		c.Send(CreateMessageToJs(JS_ADD_MESSAGE, m).Byte())
@@ -146,9 +153,30 @@ func init() {
 			return
 		}
 		datatbase.SendMessage(c.UserId, to, args[1].(string))
-		m := datatbase.GetMessage(int64(args[0].(float64)), c.UserId, 1, 0)
+		m := datatbase.GetMessage(c.UserId, to, 1, 0)
 		message := CreateMessageToJs(JS_ADD_MESSAGE, m).Byte()
-		forumHub.GetClientById(to).Send(message)
+
+		var us []map[string]interface{}
+		us = append(us, map[string]interface{}{})
+		us[0]["ID"] = c.UserId
+		us[0]["NotifNB"] = datatbase.GetNumberNotifFrom(c.UserId, to)
+		us[0]["Nickname"] = datatbase.GetUserNicknameById(c.UserId)
+
+		buf := NewGotojsBuffer()
+		buf.Add(message)
+		buf.Add(CreateMessageToJs(JS_UPDATE_USER, us).Byte())
+
+		forumHub.GetClientById(to).Send(buf.Get())
 		c.Send(message)
+	}
+
+	actionsGO[GO_CLEAR_MESSAGE_NOTIF] = func(c *Client, args ...interface{}) {
+		to := int64(args[0].(float64))
+		datatbase.DeleteNotifFrom(to, c.UserId)
+		var us []map[string]interface{}
+		us = append(us, map[string]interface{}{})
+		us[0]["ID"] = to
+		us[0]["Nickname"] = datatbase.GetUserNicknameById(to)
+		c.Send(CreateMessageToJs(JS_UPDATE_USER, us).Byte())
 	}
 }
