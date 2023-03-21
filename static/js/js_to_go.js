@@ -34,10 +34,12 @@ class RequestToGo {
 
 // la standardisation des ordre go
 class OrderGo {
-    static GO_CREATE_USER       = 1
-    static GO_CHECK_USER_EXIST  = 2
-    static GO_LOGIN_USER        = 3
-    static GO_CHECK_USER_STATUS = 4
-    static GO_LOGOUT_USER       = 5
-    static GO_CREATE_POST       = 6
+    static GO_CREATE_USER        = 1
+    static GO_CHECK_USER_EXIST   = 2
+    static GO_LOGIN_USER         = 3
+    static GO_CHECK_USER_STATUS  = 4
+    static GO_LOGOUT_USER        = 5
+    static GO_CREATE_POST        = 6
+    static GO_GET_MESSAGE_FROM   = 7
+    static GO_SEND_MESSAGE_TO    = 8
 }

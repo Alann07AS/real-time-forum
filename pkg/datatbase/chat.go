@@ -9,21 +9,23 @@ func SendMessage(from, to int64, content string) {
 	errm.LogErr(err)
 }
 
-func GetMessage(from, to int64) (m []map[string]string) {
+func GetMessage(from, to int64, limit, ofset int) (m []map[string]string) {
 	rows, err := db.Query(`
 		SELECT users.Nickname, chat.Content, chat.Date  
 		FROM chat
 		LEFT JOIN users ON users.ID = chat.Uid_from
 		WHERE chat.Uid_from = ? AND chat.Uid_to = ? OR chat.Uid_from = ? AND chat.Uid_to = ?
-	`, from, to, to, from)
+		ORDER BY chat.Date DESC
+		LIMIT ? OFFSET ?;
+	`, from, to, to, from, limit, ofset)
 	errm.LogErr(err)
 	for rows.Next() {
 		var from, content, date string
 		rows.Scan(&from, &content, &date)
 		m = append(m, map[string]string{})
-		m[len(m)-1]["from"] = from
-		m[len(m)-1]["content"] = content
-		m[len(m)-1]["date"] = date
+		m[len(m)-1]["From"] = from
+		m[len(m)-1]["Content"] = content
+		m[len(m)-1]["Date"] = date
 	}
 	return
 }

@@ -285,4 +285,34 @@ header {
     color: red;
 }
 
+.displaychatbox {
+    display: flex !important;
+    flex-direction: row !important;
+}
+
+#chatbox {
+    width: 70%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    align-items: center;
+}
+#chatbox > button {
+    width: 20%;
+}
+
+#messages  {
+    height: 96%;
+    width: 96%;
+    margin: 2%;
+    background-color: rgba(206, 206, 206, 0.342);
+    border-radius: 2px;
+    overflow: auto;
+}
+
+#userlist {
+    width: auto;
+}
+
 /* CHAT <<<<<<<<*/

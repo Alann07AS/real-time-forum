@@ -53,7 +53,7 @@ const (
 	JS_UPDATE_CAT            = 5
 	JS_UPDATE_POST           = 6
 	JS_UPDATE_USER           = 7
-	JS_8                     = 8
+	JS_ADD_MESSAGE           = 8
 	JS_9                     = 9
 	JS_10                    = 10
 	JS_11                    = 11

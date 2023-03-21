@@ -1,4 +1,4 @@
-import { UpdateActivUser } from "./chat.js";
+import { Addmessage, UpdateActivUser } from "./chat.js";
 import { getconfig } from "./config.js";
 import { SetCookie } from "./cookies.js";
 import { ShowForumPage, UpdatePcatego, UpdatePosts } from "./forumpage.js";
@@ -41,6 +41,7 @@ class OrderJS {
 	static JS_UPDATE_CAT            = 5
 	static JS_UPDATE_POST           = 6
 	static JS_UPDATE_USER           = 7
+    static JS_ADD_MESSAGE           = 8
 
 }
 
@@ -75,4 +76,8 @@ OrderJS.setFunc(OrderJS.JS_UPDATE_POST, (...params)=>{
 
 OrderJS.setFunc(OrderJS.JS_UPDATE_USER, (...params)=>{
     UpdateActivUser(params[0])
+})
+
+OrderJS.setFunc(OrderJS.JS_ADD_MESSAGE, (...params)=>{
+    Addmessage(params[0])
 })

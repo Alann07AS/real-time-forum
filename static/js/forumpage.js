@@ -26,7 +26,7 @@ function LogOut() {
     })
 }
 
-function FocusChats(force = undefined) {
+export function FocusChats(force = undefined) {
     const posts = document.getElementById("posts")
     const createpost = document.getElementById("createpost")
     const filters = document.getElementById("filters")
