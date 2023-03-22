@@ -113,7 +113,7 @@ func init() {
 			newMessageBuf.Add(CreateMessageToJs(JS_SHOW_FORUM).Byte())
 			newMessageBuf.Add(CreateMessageToJs(JS_UPDATE_CAT, datatbase.GetCatego()).Byte())
 			newMessageBuf.Add(CreateMessageToJs(JS_UPDATE_POST, datatbase.GetPost()).Byte())
-			newMessageBuf.Add(CreateMessageToJs(JS_UPDATE_POST, datatbase.GetPost()).Byte())
+			// newMessageBuf.Add(CreateMessageToJs(JS_UPDATE_POST, datatbase.GetPost()).Byte())
 			c.Send(newMessageBuf.Get())
 		} else {
 			c.UserId = 0
@@ -161,13 +161,20 @@ func init() {
 		us[0]["ID"] = c.UserId
 		us[0]["NotifNB"] = datatbase.GetNumberNotifFrom(c.UserId, to)
 		us[0]["Nickname"] = datatbase.GetUserNicknameById(c.UserId)
-
+		us[0]["LastDate"] = datatbase.GetMostRecentNotifFrom(c.UserId, to)
 		buf := NewGotojsBuffer()
 		buf.Add(message)
 		buf.Add(CreateMessageToJs(JS_UPDATE_USER, us).Byte())
+		us[0]["ID"] = to
+		us[0]["NotifNB"] = datatbase.GetNumberNotifFrom(to, c.UserId)
+		us[0]["Nickname"] = datatbase.GetUserNicknameById(to)
+		us[0]["LastDate"] = datatbase.GetMostRecentNotifFrom(to, c.UserId)
+		buf2 := NewGotojsBuffer()
+		buf2.Add(message)
+		buf2.Add(CreateMessageToJs(JS_UPDATE_USER, us).Byte())
 
 		forumHub.GetClientById(to).Send(buf.Get())
-		c.Send(message)
+		c.Send(buf2.Get())
 	}
 
 	actionsGO[GO_CLEAR_MESSAGE_NOTIF] = func(c *Client, args ...interface{}) {
@@ -177,6 +184,7 @@ func init() {
 		us = append(us, map[string]interface{}{})
 		us[0]["ID"] = to
 		us[0]["Nickname"] = datatbase.GetUserNicknameById(to)
+		us[0]["LastDate"] = datatbase.GetMostRecentNotifFrom(c.UserId, to)
 		c.Send(CreateMessageToJs(JS_UPDATE_USER, us).Byte())
 	}
 }

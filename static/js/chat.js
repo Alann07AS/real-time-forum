@@ -16,16 +16,18 @@ export function UpdateActivUser(users) {
             const Bid = (b.id.split("_")[1])
             const Ap = document.getElementById("user_"+Aid)
             const Bp = document.getElementById("user_"+Bid)
-            const An = document.getElementById("usernotif_"+Aid)
-            const Bn = document.getElementById("usernotif_"+Bid)
-            const Aactif = Ap.classList.contains("active") 
-            const Bactif = Bp.classList.contains("active")
-            if (Aactif && !Bactif) return -1
-            if (!Aactif && Bactif) return 1
-            if (An.innerText > "0") return -1
-            if (Bn.innerText > "0") return 1
-            if (Ap.innerText[0] > Bp.innerText[0]) return 1
-            if (Ap.innerText[0] < Bp.innerText[0]) return -1
+            // const An = document.getElementById("usernotif_"+Aid)
+            // const Bn = document.getElementById("usernotif_"+Bid)
+            // const Aactif = Ap.classList.contains("active") 
+            // const Bactif = Bp.classList.contains("active")
+            // if (Aactif && !Bactif) return -1
+            // if (!Aactif && Bactif) return 1
+            // if (parseInt(An.innerText|"0") > 0) return -1
+            // if (parseInt(Bn.innerText|"0") > 0) return 1
+            if (new Date(Ap.getAttribute("lastDate")||0) > new Date(Bp.getAttribute("lastDate")||0)) return -1
+            if (new Date(Bp.getAttribute("lastDate")||0) > new Date(Ap.getAttribute("lastDate")||0)) return 1
+            if (Ap.innerText[0].toLowerCase() > Bp.innerText[0].toLowerCase()) return 1
+            if (Ap.innerText[0].toLowerCase() < Bp.innerText[0].toLowerCase()) return -1
             return 0
         });
         // Réinsère chaque div dans l'ordre trié
@@ -39,13 +41,16 @@ export function UpdateActivUser(users) {
             const existuser = document.getElementById("chatuser_"+p.ID)
             if (existuser) {
                 const bt = document.getElementById(`user_${p.ID}`)
+                console.log('p.LastDate', p.LastDate);
+                bt.setAttribute("lastDate", p.LastDate)
+                console.log(bt.id, bt.getAttribute("lastDate"));
                 if (typeof p.Actif === "boolean" ) {
                     bt.classList.toggle("active", p.Actif)
                     bt.classList.toggle("inactive", !p.Actif)
                 }
                 
                 const usernotif = document.getElementById(`usernotif_${p.ID}`)
-                usernotif.innerText = (typeof p.NotifNB === "number"?p.NotifNB:"")
+                usernotif.innerText = (typeof p.NotifNB === "number" && p.NotifNB != 0 ?p.NotifNB:"")
                 if (usernotif.innerText !== "" && activefromid === p.ID && !document.getElementById("chatbox").classList.contains("hidepage")) {
                     RequestToGo.send(RequestToGo.OrderGo.GO_CLEAR_MESSAGE_NOTIF, activefromid)
                 }
@@ -55,29 +60,33 @@ export function UpdateActivUser(users) {
             let tmpl = `
             <button id="signout">
                 <div class="border-left"></div><div class="border-bottom"></div>
-                <p class="btn-text" id="user_${p.ID}">${p.Nickname}<strong id="usernotif_${p.ID}">${typeof p.NotifNB === "number"?p.NotifNB:""}</strong></p>
+                <p class="btn-text" id="user_${p.ID}">${p.Nickname}<strong id="usernotif_${p.ID}">${(typeof p.NotifNB === "number" && p.NotifNB != 0 ?p.NotifNB:"")}</strong></p>
             </button>
             `
             const newdivuser = document.createElement("div")
             newdivuser.innerHTML += tmpl
             newdivuser.classList.add("classuser")
             newdivuser.id = "chatuser_"+p.ID
+            
             userlist.appendChild(newdivuser)
             const bt = document.getElementById(`user_${p.ID}`)
+            bt.setAttribute("lastDate", p.LastDate)
             bt.classList.toggle("active", p.Actif)
             bt.classList.toggle("inactive", !p.Actif)
             bt.addEventListener("click", function () {
-                console.log("CLICK");
                 const chatbox = document.getElementById("chatbox")
                 const chats = document.getElementById("chats")
                 const messages = document.getElementById("messages")
-
+                var scrolldone = false
                 messages.addEventListener("scroll", (e)=>{
-                    console.log(messages.scrollTop);
-                    console.log(messages.getBoundingClientRect().height);
-                    // if (this.scrollTop < 10) {
-                    //     CallMessageFrom(activefromid, messages.children.length)
-                    // }
+                    if (scrolldone) {
+                        if (messages.scrollHeight + messages.scrollTop > messages.clientHeight + 20) scrolldone = false
+                    }
+                    if (messages.scrollHeight + messages.scrollTop <= messages.clientHeight + 20) {
+                        console.log("DOSCROLL");
+                        CallMessageFrom(activefromid, messages.children.length)
+                        scrolldone = true
+                    }
                 })
                 
                 const isDisplay = !chatbox.classList.contains("hidepage")
@@ -134,8 +143,8 @@ export function Addmessage(mess) {
         divArray.sort((a, b) => {
             const Adate = new Date(a.getElementsByClassName("date")[0].innerText)
             const Bdate = new Date(b.getElementsByClassName("date")[0].innerText)
-            if (Adate > Bdate) return 1
-            if (Adate < Bdate) return -1
+            if (Adate > Bdate) return -1
+            if (Adate < Bdate) return 1
             return 0
         });
         // Réinsère chaque div dans l'ordre trié

@@ -12,6 +12,7 @@ type Client struct {
 }
 
 func (c *Client) Send(data []byte) {
+	// defer recover()
 	err := c.Conn.WriteMessage(websocket.TextMessage, data)
 	errm.LogErr(err)
 }

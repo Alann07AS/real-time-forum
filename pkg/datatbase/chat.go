@@ -48,6 +48,18 @@ func GetNumberNotifFrom(from, to int64) (nb int64) {
 	return
 }
 
+func GetMostRecentNotifFrom(from, to int64) (date string) {
+	if to == from {
+		return
+	}
+	row := db.QueryRow(`SELECT Date FROM chat  WHERE chat.Uid_from = ? AND chat.Uid_to = ? OR chat.Uid_from = ? AND chat.Uid_to = ?
+	ORDER BY chat.Date DESC
+	LIMIT 1
+	`, from, to, to, from)
+	row.Scan(&date)
+	return
+}
+
 func DeleteNotifFrom(from, to int64) (nb int64) {
 	_, err := db.Exec(`DELETE FROM notif_message  WHERE notif_message.'From' = ? AND notif_message.'To' = ? `, from, to)
 	errm.LogErr(err)

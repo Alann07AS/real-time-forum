@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	"real-time-forum/pkg/config"
@@ -24,5 +25,6 @@ func main() {
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 	http.HandleFunc("/ws", serverws.Wsconnection)
 	http.HandleFunc("/", index)
+	fmt.Println("dqs", datatbase.GetMostRecentNotifFrom(15, 17))
 	http.ListenAndServe(cfg.Port, nil)
 }

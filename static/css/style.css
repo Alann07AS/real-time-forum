@@ -310,7 +310,7 @@ header {
     border-radius: 2px;
     overflow: auto;
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
 }
 
 #userlist {
