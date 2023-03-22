@@ -317,4 +317,13 @@ header {
     width: auto;
 }
 
+.from {
+    text-align: left;
+}
+
+.to {
+    text-align: right;
+    background-color: rgba(206, 206, 206, 0.4);
+}
+
 /* CHAT <<<<<<<<*/

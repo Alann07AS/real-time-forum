@@ -12,6 +12,8 @@ export function ShowForumPage() {
     document.getElementById("forliv").classList.toggle("hidepage", false)
     document.getElementById("signout").addEventListener("click", LogOut)
     document.getElementById("createpostbt").addEventListener("click", listecreate)
+    // document.getElementById("summitpostbt").addEventListener("click", )
+    // document.getElementById("summitpostbt").removeEventListener("click", )
 }
 
 export function HideForumPage() {

@@ -54,7 +54,7 @@ var debouncupdateconection = Debounce(func(c *Client) {
 			uuu.Send(CreateMessageToJs(JS_UPDATE_USER, users).Byte())
 		}
 	}
-}, time.Millisecond*300)
+}, time.Millisecond*1)
 
 func (h *Hub) Run() {
 	for {

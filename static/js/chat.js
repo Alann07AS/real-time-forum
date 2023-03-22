@@ -124,16 +124,19 @@ export function Addmessage(mess) {
         return
     }
     getconfig((config)=>{
-        if (!mess || (mess[0].FromID != activefromid && mess[0].From != GetCookie(config.Cookies.Nickname)) ) return
+        const nickname = GetCookie(config.Cookies.Nickname)
+        if (!mess || (mess[0].FromID != activefromid && mess[0].From != nickname) ) return
         const messages = document.getElementById("messages")
         mess.forEach(m => {
             const divm = document.createElement("div")
             divm.innerHTML = 
             `
-                <div><p>${m.From}</p><p class="date">${m.Date}</p></div>
-                <p>${m.Content}</p>
-                <div class="horizontalsepbottom"></div>
+                <div><p>${m.From}: ${m.Content}</p>
+                <p class="date">${m.Date}</p></div>
+                
             `
+            console.log(Intl.DateTimeFormat().resolvedOptions().timeZone)
+            nickname===m.From?divm.classList.add("from"):divm.classList.add("to")
             messages.appendChild(divm)
         });
             // Convertit la NodeList en tableau pour pouvoir utiliser la méthode sort()
