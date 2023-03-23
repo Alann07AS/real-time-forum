@@ -127,12 +127,14 @@ export function Addmessage(mess) {
         const nickname = GetCookie(config.Cookies.Nickname)
         if (!mess || (mess[0].FromID != activefromid && mess[0].From != nickname) ) return
         const messages = document.getElementById("messages")
+        const fuseau = new Date().getTimezoneOffset()
         mess.forEach(m => {
+            const date = new Date(m.Date).setMinutes(fuseau)
             const divm = document.createElement("div")
             divm.innerHTML = 
             `
                 <div><p>${m.From}: ${m.Content}</p>
-                <p class="date">${m.Date}</p></div>
+                <p class="date">${date.toString(    )}</p></div>
                 
             `
             console.log(Intl.DateTimeFormat().resolvedOptions().timeZone)
@@ -172,3 +174,43 @@ function SendMessateTo() {
 document.getElementById("send_message").addEventListener("click", ()=>{
     SendMessateTo()
 })
+
+function DebounceIsWriting(delay) {
+    let timeId
+    let isWriting
+    let afd
+    return function(...args) {
+        if (!isWriting) {
+            isWriting = true
+            afd = activefromid
+            // toglle is wrinting
+            RequestToGo.send(RequestToGo.OrderGo.GO_TOGGLE_IS_WRITING, afd)
+        }
+        if (timeId) {
+            clearTimeout(timeId);
+        }
+        timeId = setTimeout(() => {
+            // toglle off is wrinting
+            RequestToGo.send(RequestToGo.OrderGo.GO_TOGGLE_IS_WRITING, afd)
+            isWriting = false
+        }, delay);
+    };
+}
+
+export const debounceIsWriting = DebounceIsWriting(3000)  
+let pointinterval
+export function ToggleIsWriting(id) {
+    const userwriting = document.getElementById("usernotif_"+id)
+    // userwriting.classList.toggle("flipX")
+    if (pointinterval) {
+        clearInterval(pointinterval)
+        pointinterval = undefined
+        userwriting.innerText = ""
+        return
+    }
+    pointinterval = setInterval(()=> {
+        if (userwriting.innerText.length === 3) {userwriting.innerText = ""; return}
+        userwriting.innerText += "."
+    },333)
+}
+

@@ -97,6 +97,40 @@ header {
 
 /* MAIN ACCEUIL >>>>>>>>>*/
 
+/* POST >>>>>>>>>>>*/
+#posts {
+    height: 100%;
+    width: 65%;
+    overflow: auto;
+}
+
+.classpost {
+    position: relative;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.classpost:hover {
+    color: royalblue;
+}
+
+.openpost {
+    height: 80%;
+}
+
+.comments {
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    text-align: center;
+}
+/* <<<<<<<<<POST */
+
+
 #forliv {
     display: flex;
     flex-direction: column;
@@ -122,11 +156,6 @@ header {
     transition: 1s;
 }
 
-#posts {
-    height: 100%;
-    width: 65%;
-    overflow: auto;
-}
 
 #createpost {
     left: 65%;
@@ -208,15 +237,6 @@ header {
     width: 80%;
     border-bottom: 2px solid #696578 ;
     border-radius: 50%;
-}
-
-.classpost {
-    position: relative;
-    width: 90%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
 }
 
 
@@ -325,5 +345,19 @@ header {
     text-align: right;
     background-color: rgba(206, 206, 206, 0.4);
 }
+
+/* flipping class and key frames*/
+.flipX {
+    animation: 4s anim-flipX ease infinite;
+  }
+  @keyframes anim-flipX {
+    0% {
+        transform: rotateZ(90def);
+    }
+    100% {
+        transform: rotateZ(720deg);
+    }
+
+  }
 
 /* CHAT <<<<<<<<*/

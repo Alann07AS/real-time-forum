@@ -1,6 +1,6 @@
+import { debounceIsWriting } from "./chat.js"
 import { getconfig } from "./config.js"
 import { GetCookie } from "./cookies.js"
-import { GoRequest } from "./go_to_js.js"
 import { RequestToGo } from "./js_to_go.js"
 import { HideLoginPage as hideLogPage } from "./loginpage.js"
 
@@ -12,14 +12,16 @@ export function ShowForumPage() {
     document.getElementById("forliv").classList.toggle("hidepage", false)
     document.getElementById("signout").addEventListener("click", LogOut)
     document.getElementById("createpostbt").addEventListener("click", listecreate)
-    // document.getElementById("summitpostbt").addEventListener("click", )
-    // document.getElementById("summitpostbt").removeEventListener("click", )
+    document.getElementById("summitpostbt").addEventListener("click", CreatePost)
+    document.getElementById("inputmessage").addEventListener("input", debounceIsWriting)
 }
 
 export function HideForumPage() {
     document.getElementById("forliv").classList.toggle("hidepage", true)
     document.getElementById("signout").removeEventListener("click", LogOut)
     document.getElementById("createpostbt").removeEventListener("click", listecreate)
+    document.getElementById("summitpostbt").removeEventListener("click", CreatePost)
+    document.getElementById("inputmessage").removeEventListener("input", debounceIsWriting)
 }
 
 function LogOut() {
@@ -64,10 +66,6 @@ export function UpdatePcatego(cats) {
     })
 }
 
-document.addEventListener("keydown", (e)=>{
-    if (e.key === "p") CreatePost()
-})
-
 function CreatePost() {
     const f = document.forms["createform"]
     const title = f["ptitle"].value
@@ -89,6 +87,9 @@ export function UpdatePosts(posts) {
         <p>${p.Title}</p>
         <p>${p.Username}</p>
         <p>${p.Content}</p>
+        <div id="${"postcomments_"+p.ID}" class="comments">
+
+        </div>
         <div class="horizontalsepbottom"></div>
         `
         if (existpost) {
@@ -99,6 +100,28 @@ export function UpdatePosts(posts) {
         newdivpost.classList.add("classpost")
         newdivpost.id = "post_"+p.ID
         newdivpost.innerHTML += tmpl
+        newdivpost.addEventListener("click",()=>{
+        if (newdivpost.classList.toggle("openpost")) {
+            RequestToGo.send(RequestToGo.OrderGo.GO_GET_COMMENTS, parseInt(p.ID))
+        } else {
+            document.getElementById("postcomments_"+p.ID).innerHTML = ""
+        }
+        })
         postsdiv.appendChild(newdivpost)
     })
+}
+
+export function GetComments(id, comms) {
+    console.log(id, comms);
+    const comments = document.getElementById("postcomments_"+id)
+    comms.forEach(c => {
+        const cdiv = document.createElement("div")
+        const tmpl = 
+        `
+        <p>${c.Username}</p>
+        <p>${c.Content}</p>
+        `
+        cdiv.innerHTML = tmpl
+        comments.appendChild(cdiv)
+    });
 }

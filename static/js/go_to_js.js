@@ -1,7 +1,7 @@
-import { Addmessage, UpdateActivUser } from "./chat.js";
+import { Addmessage, UpdateActivUser, ToggleIsWriting } from "./chat.js";
 import { getconfig } from "./config.js";
 import { SetCookie } from "./cookies.js";
-import { ShowForumPage, UpdatePcatego, UpdatePosts } from "./forumpage.js";
+import { GetComments, ShowForumPage, UpdatePcatego, UpdatePosts } from "./forumpage.js";
 import { ErrCredential, ShowLoginPage } from "./loginpage.js";
 
 export 
@@ -42,6 +42,9 @@ class OrderJS {
 	static JS_UPDATE_POST           = 6
 	static JS_UPDATE_USER           = 7
     static JS_ADD_MESSAGE           = 8
+    static JS_ADD_MESSAGE           = 8
+    static JS_TOGGLE_IS_WRITING     = 9
+    static JS_GET_COMMENTS          = 10
 
 }
 
@@ -80,4 +83,12 @@ OrderJS.setFunc(OrderJS.JS_UPDATE_USER, (...params)=>{
 
 OrderJS.setFunc(OrderJS.JS_ADD_MESSAGE, (...params)=>{
     Addmessage(params[0])
+})
+
+OrderJS.setFunc(OrderJS.JS_TOGGLE_IS_WRITING, (...params)=>{
+    ToggleIsWriting(params[0])
+})
+
+OrderJS.setFunc(OrderJS.JS_GET_COMMENTS, (...params)=>{
+    GetComments(params[0], (params[1]||[]))
 })

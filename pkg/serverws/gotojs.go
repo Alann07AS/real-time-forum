@@ -54,8 +54,8 @@ const (
 	JS_UPDATE_POST           = 6
 	JS_UPDATE_USER           = 7
 	JS_ADD_MESSAGE           = 8
-	JS_9                     = 9
-	JS_10                    = 10
+	JS_TOGGLE_IS_WRITING     = 9
+	JS_GET_COMMENTS          = 10
 	JS_11                    = 11
 	JS_12                    = 12
 	JS_13                    = 13

@@ -4,6 +4,12 @@ import { getconfig } from "./config.js";
 import { GetCookie } from "./cookies.js";
 import { RequestToGo } from "./js_to_go.js";
 
+window.addEventListener('beforeunload', function (e) {
+    // e.preventDefault();
+    // this.alert("YouAreClosingTab")
+    // e.returnValue = '';
+});
+
 window.onload = ()=>{
     websocket.connection().then((c)=>{ // init websocket connection
         getconfig((config)=> {

@@ -57,3 +57,28 @@ func GetPost() (m []map[string]string) {
 	}
 	return
 }
+
+func CreateComment(userid, postid int64, content string) {
+	_, err := db.Exec("INSERT INTO comment (UserID, PostID, Content) VALUES (?, ?, ?)", userid, postid, content)
+	errm.LogErr(err)
+	if err != nil {
+		return
+	}
+}
+
+func GetComment(postid int64) (m []map[string]string) {
+	rows, err := db.Query(`
+	SELECT users.Nickname, comment.Content FROM comment
+	LEFT JOIN users ON comment.UserID = users.ID
+	WHERE PostID = ?
+	`, postid)
+	errm.LogErr(err)
+	var Content, Username string
+	for rows.Next() {
+		m = append(m, map[string]string{})
+		rows.Scan(&Username, &Content)
+		m[len(m)-1]["Content"] = Content
+		m[len(m)-1]["Username"] = Username
+	}
+	return
+}
