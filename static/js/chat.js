@@ -123,18 +123,20 @@ export function Addmessage(mess) {
         notif.innerText = (parseInt(notif.innerText) | 0)+1
         return
     }
+    
     getconfig((config)=>{
         const nickname = GetCookie(config.Cookies.Nickname)
         if (!mess || (mess[0].FromID != activefromid && mess[0].From != nickname) ) return
         const messages = document.getElementById("messages")
         const fuseau = new Date().getTimezoneOffset()
         mess.forEach(m => {
-            const date = new Date(m.Date).setMinutes(fuseau)
+            const date = new Date(m.Date)
+            date.setMinutes(date.getMinutes()-fuseau)
             const divm = document.createElement("div")
             divm.innerHTML = 
             `
                 <div><p>${m.From}: ${m.Content}</p>
-                <p class="date">${date.toString(    )}</p></div>
+                <p class="date">${date.toLocaleString('fr-FR', {day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute:'2-digit'}).replace(/\//g, "/")}</p></div>
                 
             `
             console.log(Intl.DateTimeFormat().resolvedOptions().timeZone)

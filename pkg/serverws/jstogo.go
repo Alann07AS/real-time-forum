@@ -2,7 +2,6 @@ package serverws
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"real-time-forum/pkg/datatbase"
 
@@ -46,7 +45,7 @@ const (
 	GO_CLEAR_MESSAGE_NOTIF = 9
 	GO_TOGGLE_IS_WRITING   = 10
 	GO_GET_COMMENTS        = 11
-	GO_12                  = 12
+	GO_CREATE_COMMENT      = 12
 	GO_13                  = 13
 	GO_14                  = 14
 	GO_15                  = 15
@@ -191,7 +190,9 @@ func init() {
 
 	actionsGO[GO_TOGGLE_IS_WRITING] = func(c *Client, args ...interface{}) {
 		client := c.Hub.GetClientById(int64(args[0].(float64)))
-		fmt.Println("client", client)
+		if client == nil {
+			return
+		}
 		client.Send(CreateMessageToJs(JS_TOGGLE_IS_WRITING, c.UserId).Byte())
 	}
 
@@ -199,5 +200,10 @@ func init() {
 		pid := int64(args[0].(float64))
 		m := datatbase.GetComment(pid)
 		c.Send(CreateMessageToJs(JS_GET_COMMENTS, pid, m).Byte())
+	}
+
+	actionsGO[GO_CREATE_COMMENT] = func(c *Client, args ...interface{}) {
+		datatbase.CreateComment(c.UserId, int64(args[0].(float64)), args[1].(string))
+		actionsGO[GO_GET_COMMENTS](c, args...)
 	}
 }

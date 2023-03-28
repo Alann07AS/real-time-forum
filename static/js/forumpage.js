@@ -84,9 +84,10 @@ export function UpdatePosts(posts) {
     posts.forEach((p)=>{
         const existpost = document.getElementById("post_"+p.ID)
         let tmpl = `
-        <p>${p.Title}</p>
-        <p>${p.Username}</p>
-        <p>${p.Content}</p>
+        <p class="ptitle">${p.Title}</p>
+        <p class="pname">${p.Username}</p>
+        <p class="pcontent">${p.Content}</p>
+        <button><div class="border-left"></div><div class="border-bottom"></div><p class="btn-text" id="showcomment_${p.ID}" style="bottom: -7px;">Show comments</p></button>
         <div id="${"postcomments_"+p.ID}" class="comments">
 
         </div>
@@ -100,26 +101,38 @@ export function UpdatePosts(posts) {
         newdivpost.classList.add("classpost")
         newdivpost.id = "post_"+p.ID
         newdivpost.innerHTML += tmpl
-        newdivpost.addEventListener("click",()=>{
+        postsdiv.appendChild(newdivpost)
+        document.getElementById("showcomment_"+p.ID).addEventListener("click",()=>{
         if (newdivpost.classList.toggle("openpost")) {
             RequestToGo.send(RequestToGo.OrderGo.GO_GET_COMMENTS, parseInt(p.ID))
         } else {
             document.getElementById("postcomments_"+p.ID).innerHTML = ""
         }
         })
-        postsdiv.appendChild(newdivpost)
     })
 }
 
 export function GetComments(id, comms) {
     console.log(id, comms);
     const comments = document.getElementById("postcomments_"+id)
+    comments.innerHTML = `
+    <form id="${"newcommentpost_"+id}" action="javascript:void(0);">
+        <p>New Comment</p>
+        <textarea name="newcom" id="" cols="30" rows="10"></textarea>
+        <button><div class="border-left"></div><div class="border-bottom"></div><p class="btn-text" id="sendcomment _${id}">Send</p></button>
+    </form>
+    `
+    document.forms["newcommentpost_"+id].onsubmit = function () {
+        const val = document.forms["newcommentpost_"+id][0].value
+        if (val === "") return
+        RequestToGo.send(RequestToGo.OrderGo.GO_CREATE_COMMENT, id, val)
+    }
     comms.forEach(c => {
         const cdiv = document.createElement("div")
         const tmpl = 
         `
-        <p>${c.Username}</p>
-        <p>${c.Content}</p>
+        <p class="cname">${c.Username}</p>
+        <p class="ccontent">${c.Content}</p>
         `
         cdiv.innerHTML = tmpl
         comments.appendChild(cdiv)

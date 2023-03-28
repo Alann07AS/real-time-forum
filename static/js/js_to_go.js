@@ -45,4 +45,5 @@ class OrderGo {
     static GO_CLEAR_MESSAGE_NOTIF   = 9
     static GO_TOGGLE_IS_WRITING     = 10
     static GO_GET_COMMENTS          = 11
+    static GO_CREATE_COMMENT        = 12
 }
