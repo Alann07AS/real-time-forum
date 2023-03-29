@@ -22,6 +22,15 @@ export function HideForumPage() {
     document.getElementById("createpostbt").removeEventListener("click", listecreate)
     document.getElementById("summitpostbt").removeEventListener("click", CreatePost)
     document.getElementById("inputmessage").removeEventListener("input", debounceIsWriting)
+    document.getElementById("messages").innerHTML = ""
+    const chatbox = document.getElementById("chatbox")
+    const chats = document.getElementById("chats")
+    const messages = document.getElementById("messages")
+    chatbox.classList.toggle("hidepage", true)
+    chats.classList.toggle("displaychatbox", false)
+    const messagecl = messages.cloneNode(true);
+    messages.parentNode.replaceChild(messagecl, messages);
+    FocusChats(false)
 }
 
 function LogOut() {
