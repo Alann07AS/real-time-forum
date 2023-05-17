@@ -41,9 +41,7 @@ export function UpdateActivUser(users) {
             const existuser = document.getElementById("chatuser_"+p.ID)
             if (existuser) {
                 const bt = document.getElementById(`user_${p.ID}`)
-                console.log('p.LastDate', p.LastDate);
                 bt.setAttribute("lastDate", p.LastDate)
-                console.log(bt.id, bt.getAttribute("lastDate"));
                 if (typeof p.Actif === "boolean" ) {
                     bt.classList.toggle("active", p.Actif)
                     bt.classList.toggle("inactive", !p.Actif)
@@ -80,7 +78,7 @@ export function UpdateActivUser(users) {
                 var scrolldone = false
                 messages.addEventListener("scroll", (e)=>{
                     if (scrolldone) {
-                        if (messages.scrollHeight + messages.scrollTop > messages.clientHeight + 20) scrolldone = false
+                        if (messages.scrollHeight + messages.scrollTop > messages.clientHeight + 20) setTimeout(()=>{scrolldone = false}, 1000)
                     }
                     if (messages.scrollHeight + messages.scrollTop <= messages.clientHeight + 20) {
                         console.log("DOSCROLL");
@@ -97,6 +95,7 @@ export function UpdateActivUser(users) {
                         openchat(false)
                         chatbox.classList.toggle("hidepage", true)
                         chats.classList.toggle("displaychatbox", false)
+                        messages.onclick = ""
                         return
                     } else {
                         RequestToGo.send(RequestToGo.OrderGo.GO_CLEAR_MESSAGE_NOTIF, uid)
